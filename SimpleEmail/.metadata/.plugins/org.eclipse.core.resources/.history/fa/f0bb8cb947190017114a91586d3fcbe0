@@ -1,0 +1,11 @@
+package email;
+
+import java.awt.event.MouseListener;
+
+public abstract class MouseEvent implements MouseListener {
+
+    public void mouseClicked(MouseEvent e) {
+    	
+    }
+
+}

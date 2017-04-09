@@ -1,0 +1,30 @@
+package email;
+
+import java.util.ArrayList;
+
+public class Server 
+{
+	private ArrayList<User> users;
+	
+	public Server()
+	{
+		users = new ArrayList<User>();
+	}
+	
+	public boolean checkIfUserExists(String username)
+	{
+		for (User u : users)
+		{
+			if (u.getUserName() == username)
+				return true;
+		}
+		return false;		
+	}
+	
+	public void addUser(String username)
+	{
+		User newUser = new User(username);
+		users.add(newUser);
+	}
+
+}

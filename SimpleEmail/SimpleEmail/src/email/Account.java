@@ -1,0 +1,48 @@
+package email;
+
+import java.util.ArrayList;
+
+public class Account 
+{
+	private ArrayList<Email> inboxEmails;	// stores an ArrayList of emails the Account has received
+	private ArrayList<Email> sentEmails;		
+	private ArrayList<Email> trashEmails;
+	private String username;					// example@otherexample.com
+	
+	// parameterized constructor
+	public Account(String name)
+	{
+		inboxEmails = new ArrayList<Email>();
+		sentEmails = new ArrayList<Email>();
+		trashEmails = new ArrayList<Email>();
+		username = name;
+	}
+	
+	public void setAccountName(String name)
+	{
+		username = name;
+	}
+	
+	public String getAccountName()
+	{
+		return username;
+	}
+	
+	public void addEmailToInbox(Email email)
+	{
+		// Need way to sort emails by timestamp
+		inboxEmails.add(email);
+	}
+	
+	public void removeEmailFromInbox(Email email)
+	{
+		trashEmails.add(email);				// add to trash
+		inboxEmails.remove(email);			// remove from inbox
+	}
+	
+	public void deleteEmail(Email email)
+	{
+		// delete email from trash
+		trashEmails.remove(email);
+	}
+}

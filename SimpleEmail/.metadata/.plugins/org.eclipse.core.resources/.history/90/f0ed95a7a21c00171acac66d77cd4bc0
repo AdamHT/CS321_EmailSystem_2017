@@ -1,0 +1,98 @@
+package email;
+
+import java.util.ArrayList;
+
+public class User {
+	
+	private String username;
+	private ArrayList<Account> remoteAccounts;
+	private ArrayList<Account> localAccounts;
+	
+	public User(String username)
+	{
+		this.username = username;
+		remoteAccounts = new ArrayList<Account>();
+		localAccounts = new ArrayList<Account>();
+	}
+	
+	public String getUserName()
+	{
+		return username;
+	}
+	
+	public boolean checkIfRemoteAccountExists(String name)
+	{
+		for (Account a : remoteAccounts)
+		{
+			if (a.getAccountName().equals(name))
+				return true;
+		}
+		return false;		
+	}
+	
+	public boolean checkIfLocalAccountExists(String name)
+	{
+		for (Account a : localAccounts)
+		{
+			if (a.getAccountName().equals(name))
+				return true;
+		}
+		return false;		
+	}
+	
+	public void addLocalAccount(String accountName)
+	{
+		Account account = new Account(accountName);
+		localAccounts.add(account);
+	}
+	
+	public void addRemoteAccount(String accountName)
+	{
+		Account account = new Account(accountName);
+		remoteAccounts.add(account);
+	}
+	
+ 	public Account findRemoteAccount(String username)
+	{
+		for (Account a : remoteAccounts)
+		{
+			if (a.getAccountName() == username)
+				return a;
+		}
+		return null;
+	}
+	
+ 	public Account findLocalAccount(String username)
+	{
+		for (Account a : localAccounts)
+		{
+			if (a.getAccountName() == username)
+				return a;
+		}
+		
+		return null;
+	}
+	
+	public void deleteLocalAccount(String username)
+	{
+		Account localAccount = findLocalAccount(username);
+		localAccounts.remove(localAccount);
+	}
+	
+	public void deleteRemoteAccount(String username)
+	{
+		Account remoteAccount = findRemoteAccount(username);
+		remoteAccounts.remove(remoteAccount);
+	}
+	
+	public void deleteLocalAccounts()
+	{
+		localAccounts.removeAll(localAccounts);
+	}
+	
+	public void deleteRemoteAccounts()
+	{
+		remoteAccounts.removeAll(remoteAccounts);
+	}
+
+}

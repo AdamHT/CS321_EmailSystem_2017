@@ -1,0 +1,75 @@
+package email;
+
+import java.util.ArrayList;
+
+public class Server 
+{
+	private ArrayList<User> userlist;
+	
+	public Server()
+	{
+		userlist = new ArrayList<User>();
+	}
+	
+	public boolean checkIfUserExists(String username)
+	{
+		for (User u : userlist)
+		{
+			if (u.getUserName().equals(username))
+				return true;
+		}
+		return false;		
+	}
+	
+	public void addUser(String username)
+	{
+		User newUser = new User(username);
+		userlist.add(newUser);
+	}
+	
+	public boolean checkIfAccountExists(String username, String account)
+	{
+		boolean returnFlag = false;
+		for (User u : userlist)
+		{
+			if (u.getUserName().equals(username))
+			{
+				returnFlag = u.checkIfRemoteAccountExists(account);
+				returnFlag = u.checkIfLocalAccountExists(account);
+			}
+		}
+		
+		return returnFlag;
+	}
+	
+	public void addLocalAccount(String username, String accountName)
+	{
+		for(User u : userlist)
+		{
+			if (u.getUserName().equals(username))
+				u.addLocalAccount(accountName);
+		}
+	}
+	
+	public void addRemoteAccount(String username, String accountName)
+	{
+		for(User u : userlist)
+		{
+			if (u.getUserName().equals(username))
+				u.addRemoteAccount(accountName);
+		}
+	}
+	
+	public void deleteUser(String username)
+	{
+		for(User u : userlist)
+		{
+			if (u.getUserName().equals(username))
+			{
+//				u.deleteLocalAccounts();
+//				u.deleteRemoteAccounts();
+				userlist.remove(u);
+			}
+		}
+	}
+}

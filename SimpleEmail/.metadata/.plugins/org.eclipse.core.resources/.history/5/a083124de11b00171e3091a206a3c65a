@@ -1,0 +1,14 @@
+package email;
+
+import java.awt.event.MouseListener;
+import java.awt.*;
+import javax.swing.*;
+
+public abstract class MouseEvent implements MouseListener {
+
+    public void mouseClicked(MouseEvent e) {
+    	JFrame frame = new JFrame();
+        frame.setLayout(new BorderLayout());
+    }
+
+}

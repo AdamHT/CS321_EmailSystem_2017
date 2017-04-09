@@ -1,0 +1,12 @@
+package email;
+
+import java.awt.event.MouseListener;
+
+public class MouseEvent implements MouseListener {
+
+    public void mouseClicked(MouseEvent e) {
+       saySomething("Mouse clicked (# of clicks: "
+                    + e.getClickCount() + ")", e);
+    }
+
+}

@@ -1,0 +1,374 @@
+package email;
+
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.GridBagConstraints;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTree;
+import javax.swing.UIManager;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+
+public class UserInterface 
+{	
+	private JPanel topPanel = new JPanel(new GridLayout(3,0));
+	
+	private JButton menuButton = new JButton("MENU");
+	private JPopupMenu addpopupMenu = new JPopupMenu();
+	private JMenuItem menuItemAddUser = new JMenuItem("Add User");
+	private JMenuItem menuItemAddAccount = new JMenuItem("Add Account");
+	private JMenuItem menuItemDeleteUser = new JMenuItem("Delete User ");
+	private JMenuItem menuItemDeleteAccount = new JMenuItem("Delete Account");
+	
+	private JButton sendButton = new JButton("Send");
+	private JButton trashButton = new JButton("Trash");
+	private JButton replyButton = new JButton("Reply");
+	private JButton composeButton = new JButton("Compose");
+	
+	private JPanel headerPanel = new JPanel();
+	private JPanel userPanel = new JPanel();
+	private JPanel textPanel = new JPanel();
+	private JPanel menuPanel = new JPanel();
+	private JPanel namePanel = new JPanel();
+	private JTextArea emailtext = new JTextArea(20, 106);
+	private JLabel projectX = new JLabel("Project X");
+	
+	private JTree tree;
+	private DefaultMutableTreeNode top = new DefaultMutableTreeNode("Project X");
+	
+	public UserInterface(Server server) {
+		
+		JFrame serverFrame = new JFrame("Project X Email System");
+		
+		GridBagLayout gridBag = new GridBagLayout();
+		GridBagConstraints c = new GridBagConstraints();
+		
+		menuPanel.setLayout(gridBag);
+		c.fill = GridBagConstraints.HORIZONTAL;
+		namePanel.setBackground(Color.GRAY);
+		
+		menuPanel.setLayout(gridBag);
+		c.fill = GridBagConstraints.HORIZONTAL;
+		menuPanel.setBackground(Color.GRAY);
+		
+		headerPanel.setLayout(gridBag);
+		c.fill = GridBagConstraints.HORIZONTAL;
+		headerPanel.setBackground(Color.lightGray);
+		
+		addpopupMenu.add(menuItemAddUser);
+		addpopupMenu.add(menuItemAddAccount);
+		addpopupMenu.add(menuItemDeleteUser);
+		addpopupMenu.add(menuItemDeleteAccount);
+		
+		c.weightx = 0;
+		c.gridx = 1;
+		c.gridy = 0;
+		c.anchor = GridBagConstraints.FIRST_LINE_START;
+		namePanel.add(projectX);
+		
+		projectX.setForeground(Color.white);
+		projectX.setFont(projectX.getFont().deriveFont(24f)); 
+		
+		//addUser add
+		menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
+		menuPanel.add(menuButton, c);
+		
+		UIManager.put("Tree.rendererFillBackground", false);
+		DefaultTreeModel model = new DefaultTreeModel(top);
+		tree = new JTree(model);
+		JScrollPane userView = new JScrollPane(tree);
+		userView.setBorder(BorderFactory.createEmptyBorder());
+		
+		menuButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent event) {
+		        addpopupMenu.show(menuButton, menuButton.getBounds().x, menuButton.getBounds().y
+		           + menuButton.getBounds().height);
+		    }
+		});
+		
+		menuItemAddUser.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) 
+            {       	
+            	//add to Tree using selected node
+                DefaultMutableTreeNode selectedTreeNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+                //if the selected node is not empty and it is the child of the top
+                if (selectedTreeNode != null && (selectedTreeNode.getLevel() == 0)) 
+                {
+                	//get username
+                	String user = JOptionPane.showInputDialog(serverFrame, "Enter a username.");
+                	
+                	if(!(user.equals("")))
+	                {
+						//if the userExists, add the node 
+						if(server.checkIfUserExists(user) == false)
+						{
+							DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(user);
+			                DefaultMutableTreeNode remote = new DefaultMutableTreeNode("Remote");
+			                DefaultMutableTreeNode local = new DefaultMutableTreeNode("Local");
+			                model.insertNodeInto(newNode, selectedTreeNode, selectedTreeNode.getChildCount());
+			                model.insertNodeInto(remote, newNode, newNode.getChildCount());
+			                model.insertNodeInto(local, newNode, newNode.getChildCount());
+			                TreeNode[] nodes = model.getPathToRoot(newNode);
+			                TreePath path = new TreePath(nodes);
+			                tree.scrollPathToVisible(path);
+			                tree.setSelectionPath(path);
+			                tree.startEditingAtPath(path);
+			                  
+			                //add to ArrayList
+			                server.addUser(user);
+						}
+						
+						else
+						{
+							//Show User exists error
+							JOptionPane.showMessageDialog(null, "USER EXISTS", "ALERT", JOptionPane.ERROR_MESSAGE);
+						}
+	                }
+                	
+                	else
+					{
+	                	//Show invalid account user message
+						JOptionPane.showMessageDialog(null, "Enter a valid user name", "ALERT", JOptionPane.ERROR_MESSAGE);
+					}
+                }
+                
+                else
+				{
+					//Show invalid selection message
+					JOptionPane.showMessageDialog(null, "Click on 'Project X' to add new user", "ALERT", JOptionPane.ERROR_MESSAGE);
+				}
+               
+            }//end ActionPerformed
+        });
+
+		menuItemAddAccount.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) 
+            {      
+                //add to Tree
+                DefaultMutableTreeNode selectedTreeNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+                
+                //only add to tree if child of site nodes
+                if (selectedTreeNode != null && (selectedTreeNode.getLevel() == 2)) 
+                {
+                	String extension = JOptionPane.showInputDialog(serverFrame, "Enter a site extension (ex. gmail.com)", null);
+                	
+	                //get parent node
+	                String user = selectedTreeNode.getParent().toString();
+	                
+	                if(!(extension.equals("")))
+	                {
+		                //create full account string
+		                String account = user + '@' + extension;
+		                
+		                //if account doesn't exist
+		                if(server.checkIfAccountExists(user, account) == false)
+		                {
+			                //add to Tree under selected Node
+			                DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(account);
+			            	model.insertNodeInto(newNode, selectedTreeNode, selectedTreeNode.getChildCount());
+			            	
+			            	//mailbox nodes
+		                	DefaultMutableTreeNode sent = new DefaultMutableTreeNode("Sent");
+		                    DefaultMutableTreeNode inbox = new DefaultMutableTreeNode("Inbox");
+		                    DefaultMutableTreeNode trash = new DefaultMutableTreeNode("Trash");
+		                    
+		                    //add mailboxes to account on GUI
+		            	  	model.insertNodeInto(inbox, newNode, newNode.getChildCount());
+		                    model.insertNodeInto(sent, newNode, newNode.getChildCount());
+		                    model.insertNodeInto(trash, newNode, newNode.getChildCount());
+
+			            	TreeNode[] nodes = model.getPathToRoot(newNode);
+			            	TreePath path = new TreePath(nodes);
+			            	tree.scrollPathToVisible(path);
+			            	tree.setSelectionPath(path);
+			            	tree.startEditingAtPath(path);
+			            	  	  
+			                if(selectedTreeNode.toString() == "Remote")
+			                {
+			                	server.addRemoteAccount(user, account);
+			                }
+			                else if(selectedTreeNode.toString() == "Local")
+			                {
+			                	server.addLocalAccount(user, account);
+			                }
+			                //add to ArrayList for accounts
+		                } 
+		                
+		                else
+		          		{
+		                	//Show Account exists error
+		                	JOptionPane.showMessageDialog(null, "ACCOUNT EXISTS", "ALERT", JOptionPane.ERROR_MESSAGE);
+		          		}
+	                }
+	                
+	                else
+					{
+	                	//Show invalid account extension message
+						JOptionPane.showMessageDialog(null, "Enter a valid account extension", "ALERT", JOptionPane.ERROR_MESSAGE);
+					}
+                }
+                
+                else
+				{
+                	//Show invalid selection message
+					JOptionPane.showMessageDialog(null, "Click on Remote or Local Account to add new account", "ALERT", JOptionPane.ERROR_MESSAGE);
+				}
+            }
+        });
+		
+		menuItemDeleteUser.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) 
+            {
+            	//delete user from Tree
+                DefaultMutableTreeNode selectedTreeNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+                
+                //only add to tree if child of site nodes
+                if (selectedTreeNode != null && (selectedTreeNode.getLevel() == 1)) 
+                {                	
+	                //get parent node
+                	int index = selectedTreeNode.getParent().getIndex(selectedTreeNode);
+	                server.deleteUser(index);
+        			model.removeNodeFromParent(selectedTreeNode);
+                }
+                
+                else
+				{
+                	//Show invalid account extension message
+					JOptionPane.showMessageDialog(null, "Select a user to delete", "ALERT", JOptionPane.ERROR_MESSAGE);
+				}
+            }
+        });
+		
+		menuItemDeleteAccount.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) 
+            {
+            	//delete user from Tree
+                DefaultMutableTreeNode selectedTreeNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+                
+                //only add to tree if child of site nodes
+                if (selectedTreeNode != null && (selectedTreeNode.getLevel() == 3)) 
+                {
+                	int index = selectedTreeNode.getParent().getIndex(selectedTreeNode);
+                	String username = selectedTreeNode.getParent().getParent().toString();
+                	String extension = selectedTreeNode.getParent().toString();
+                	
+	                server.deleteAccount(username, extension, index);
+        			model.removeNodeFromParent(selectedTreeNode);
+                }
+                
+                else
+				{
+                	//Show invalid account extension message
+					JOptionPane.showMessageDialog(null, "Select an account to delete", "ALERT", JOptionPane.ERROR_MESSAGE);
+				}
+            }
+        });
+		
+		//sendButton add
+		c.weightx = 0.5;
+		c.gridx = 0;
+		c.gridy = 0;
+		headerPanel.add(sendButton, c);
+		
+		//replyButton add
+		c.weightx = 0.5;
+		c.gridx = 1;
+		c.gridy = 0;
+		headerPanel.add(replyButton, c);
+		
+		//composeButton add
+		c.weightx = 0.5;
+		c.gridx = 2;
+		c.gridy = 0;
+		headerPanel.add(composeButton, c);
+		
+		//trashButton add
+		c.weightx = 0.5;
+		c.gridx = 3;
+		c.gridy = 0;
+		headerPanel.add(trashButton, c);
+		
+		//view add
+		userPanel.setLayout(gridBag);
+		c.weighty = 1;
+		c.weightx = 2;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.fill = GridBagConstraints.BOTH;
+		userPanel.add(userView, c);
+		
+		//emailtext add
+		c.weighty = 1;
+		c.weightx = 1;
+		c.gridx = 0;
+		c.fill = GridBagConstraints.BOTH;
+		c.gridy = 0;
+		textPanel.add(emailtext, c);
+		emailtext.setEditable(true);
+		
+		serverFrame.setLayout(gridBag);
+		serverFrame.setSize(1280, 720);
+
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weightx = 1;
+		c.weighty = 0.1;
+		c.gridwidth = 5;
+		serverFrame.add(namePanel,c);
+		
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 5;
+		c.gridheight = 1;
+		serverFrame.add(menuPanel,c);
+		
+		c.gridx = 0;
+		c.gridy = 2;
+		c.gridwidth = 5;
+		c.gridheight = 1;
+		serverFrame.add(headerPanel,c);
+		
+		c.gridx = 0;
+		c.gridy = 3;
+		c.weightx = 0.1;
+		c.weighty = 0.1;
+		c.gridwidth = 1;
+		c.gridheight = 50;
+		serverFrame.add(userPanel, c);
+		
+		c.gridx = 1;
+		c.gridy = 3;
+		c.weightx = 0.9;
+		c.weighty = 1;
+		c.gridwidth = 4;
+		c.gridheight = 50;
+		serverFrame.add(textPanel, c);
+		
+		serverFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		serverFrame.setVisible(true);
+	}
+}

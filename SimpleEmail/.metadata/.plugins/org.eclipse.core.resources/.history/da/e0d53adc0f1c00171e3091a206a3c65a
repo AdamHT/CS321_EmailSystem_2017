@@ -1,0 +1,64 @@
+package email;
+
+import java.util.ArrayList;
+
+public class Server 
+{
+	private ArrayList<Account> remoteAccounts;
+	private ArrayList<Account> localAccounts;
+
+	public Server()
+	{
+		remoteAccounts = new ArrayList<Account>();
+		localAccounts = new ArrayList<Account>();
+		
+		UserInterface UI = new UserInterface();
+		
+	}
+	
+	public Account findRemoteAccount(String username)
+	{
+		for (Account a : remoteAccounts)
+		{
+			if (a.getAccountName() == username)
+				return a;
+		}
+		return null;
+	}
+	
+	public Account findLocalAccount(String username)
+	{
+		for (Account a : localAccounts)
+		{
+			if (a.getAccountName() == username)
+				return a;
+		}
+		
+		return null;
+
+	}
+	
+	public void addLocalAccount(Account account)
+	{
+		localAccounts.add(account);
+	}
+	
+	public void addRemoteAccount(Account account)
+	{
+		remoteAccounts.add(account);
+	}
+	
+	public void deleteLocalAccount(String username)
+	{
+		Account localAccount = findLocalAccount(username);
+		localAccounts.remove(localAccount);
+	}
+	
+	public void deleteRemoteAccount(String username)
+	{
+		Account remoteAccount = findRemoteAccount(username);
+		remoteAccounts.remove(remoteAccount);
+	}
+	
+
+}

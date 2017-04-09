@@ -1,0 +1,127 @@
+package email;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+public class UserInterface {
+	
+	public UserInterface() {
+		
+		JFrame serverFrame = new JFrame("Project X Email System - GUI Prototype");
+
+		JPanel topPanel = new JPanel(new GridLayout(3,0));
+		JButton sendButton = new JButton("Send");
+		JButton trashButton = new JButton("Trash");
+		JButton replyButton = new JButton("Reply");
+		JButton composeButton = new JButton("Compose");
+		JButton addUser = new JButton("Add User");
+		JPanel headerPanel = new JPanel();
+		JPanel userPanel = new JPanel();
+		JPanel textPanel = new JPanel();
+		JPanel optionPanel = new JPanel();
+		JPanel namePanel = new JPanel();
+		JTextArea emailtext = new JTextArea(5, 10);
+		JLabel projectX = new JLabel("Project X");
+		
+		GridBagLayout gridBag = new GridBagLayout();
+		GridBagConstraints c = new GridBagConstraints();
+		
+		optionPanel.setLayout(gridBag);
+		c.fill = GridBagConstraints.HORIZONTAL;
+//		namePanel.setBackground(new Color(81, 140, 140));
+		namePanel.setBackground(Color.GRAY);
+		
+		optionPanel.setLayout(gridBag);
+		c.fill = GridBagConstraints.HORIZONTAL;
+//		optionPanel.setBackground(new Color(81, 140, 140));
+		optionPanel.setBackground(Color.GRAY);
+		
+		headerPanel.setLayout(gridBag);
+		c.fill = GridBagConstraints.HORIZONTAL;
+//		headerPanel.setBackground(new Color(135, 200, 245));
+		headerPanel.setBackground(Color.lightGray);
+		
+		DefaultMutableTreeNode top = new DefaultMutableTreeNode("Project X");
+		JTree tree = new JTree(top);
+		JScrollPane view = new JScrollPane(tree);
+		
+		c.weightx = 0;
+		c.gridx = 1;
+		c.gridy = 0;
+		c.anchor = GridBagConstraints.FIRST_LINE_START;
+		namePanel.add(projectX);
+		
+		projectX.setForeground(Color.white);
+		projectX.setFont(projectX.getFont().deriveFont(24f)); 
+		
+		//addUser add
+		optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
+		optionPanel.add(addUser, c);
+		
+		//sendButton add
+		c.weightx = 0.5;
+		c.gridx = 0;
+		c.gridy = 0;
+		headerPanel.add(sendButton, c);
+		
+		//replyButton add
+		c.weightx = 0.5;
+		c.gridx = 1;
+		c.gridy = 0;
+		headerPanel.add(replyButton, c);
+		
+		//composeButton add
+		c.weightx = 0.5;
+		c.gridx = 2;
+		c.gridy = 0;
+		headerPanel.add(composeButton, c);
+		
+		//trashButton add
+		c.weightx = 0.5;
+		c.gridx = 3;
+		c.gridy = 0;
+		headerPanel.add(trashButton, c);
+		
+		//view add
+		userPanel.setLayout(gridBag);
+		c.gridx = 0;
+		c.gridy = 0;
+		c.ipadx = 50;
+		c.ipady = 1080;
+		userPanel.add(view, c);
+		
+		
+		//emailtext add
+		textPanel.setLayout(gridBag);
+		c.gridx = 0;
+		c.gridy = 0;
+		c.ipadx = 1870;
+		c.ipady = 1080;
+		textPanel.add(emailtext, c);
+		emailtext.setEditable(false);
+		emailtext.setBackground(Color.lightGray);
+		
+		serverFrame.setSize(1280, 720);
+		topPanel.add(namePanel);
+		topPanel.add(optionPanel);
+		topPanel.add(headerPanel);
+		serverFrame.add(topPanel, BorderLayout.NORTH);
+		serverFrame.add(userPanel, BorderLayout.WEST);
+		serverFrame.add(textPanel, BorderLayout.EAST);
+		serverFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		serverFrame.setVisible(true);
+	}
+
+}
